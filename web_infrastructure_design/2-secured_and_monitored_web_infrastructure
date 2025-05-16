@@ -1,0 +1,41 @@
+https://ibb.co/MxxYy5W6
+
+Added Components & Their Purpose
+
+Firewalls 
+Purpose: Control incoming and outgoing traffic, reducing attack surface.
+Firewall 1: Protects public entry to the load balancer.
+Firewall 2: Isolates app nodes from the public, only allows traffic from the load balancer.
+Firewall 3: Protects database traffic, only allows connections from app servers.
+SSL Certificate
+Purpose: Encrypts traffic for data privacy and integrity, preventing MITM attacks.
+Termination: Done at the load balancer to reduce overhead on app servers.
+Monitoring Clients
+Purpose: Track server health, performance, and security metrics.
+Setup: Installed on each server, sending logs and metrics to a central monitoring service like Sumologic, Prometheus, or Datadog.
+Key Security and Monitoring Concepts
+
+Firewalls
+Restrict access to only necessary ports (e.g., 80, 443, 3306).
+Filter unwanted traffic, reduce risk of DDoS and brute-force attacks.
+HTTPS Traffic
+Ensures encryption of data in transit.
+Prevents eavesdropping, MITM attacks, and data tampering.
+Monitoring
+Collects CPU, memory, disk, network metrics.
+Sends logs for error tracking and alerting.
+Helps identify issues before they cause downtime.
+QPS (Queries per Second) Monitoring
+Use Nginx access logs, MySQL query logs, or tools like Prometheus to track.
+Set up alerts for sudden spikes indicating DDoS or resource exhaustion.
+Potential Problems
+
+SSL Termination at Load Balancer
+SSL is decrypted at the LB, meaning internal traffic is unencrypted.
+Can expose sensitive data if internal network is compromised.
+Single MySQL Primary
+All writes depend on one server—if it fails, write operations are blocked.
+Risk of data loss or inconsistency without proper replication and failover.
+Identical App Nodes
+If every node includes all components (web server, app server, database), a single compromised node exposes multiple attack surfaces.
+Resource contention can lead to bottlenecks.

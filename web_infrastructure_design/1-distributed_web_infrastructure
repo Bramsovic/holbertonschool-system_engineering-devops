@@ -1,0 +1,41 @@
+https://ibb.co/k6cFNJRp
+
+Added Components & Their Purpose
+
+HAProxy Load Balancer
+Why? Distributes incoming requests across multiple backend servers, improving availability and throughput.
+Placement: Sits in front of your two identical app/web nodes.
+Second App/Web Node
+Why? Provides capacity beyond a single server, and redundancy: if one node fails, the other continues serving traffic.
+MySQL Primary-Replica Cluster
+Why? Separates write traffic (Primary) from read traffic (Replicas), enabling higher read scalability and data redundancy.
+Load Balancer Configuration
+
+Algorithm: Round-Robin
+HAProxy forwards each new client request in turn to Node 1, Node 2, Node 1, Node 2, …
+This evenly spreads load when all nodes have similar capacity.
+Active-Active vs. Active-Passive
+Active-Active: Both backend nodes actively serve traffic (what we’ve implemented). If one fails, the other still handles requests.
+Active-Passive: One node serves all traffic (“active”), while the other stands by (“passive”). If the active node fails, the passive is promoted—there’s a brief failover before traffic resumes.
+Primary-Replica (Master-Slave) Database Cluster
+
+Primary Node
+Handles all writes (INSERT/UPDATE/DELETE).
+Logs changes in a binary log.
+Replica Nodes
+Connect to the Primary and read its binary log.
+Reapply those changes locally to stay in sync.
+Serve read-only queries (SELECT), offloading read traffic from the Primary.
+Write vs. Read Separation
+Application servers send all writes to the Primary.
+Reads (analytics, page views, menus) go to whichever Replica is least loaded.
+Remaining Single Points of Failure & Other Issues
+
+SPOF
+Load Balancer: If HAProxy itself crashes (and no secondary LB), the site is unavailable.
+Database Primary: If the Primary goes down before failover, writes cannot be accepted.
+Security Gaps
+No Firewall: Servers are exposed to the Internet—should restrict ports to only 80/443 and SSH from trusted IPs.
+No HTTPS/TLS: Traffic (credentials, sessions) is unencrypted. We need SSL certificates on HAProxy or Nginx.
+Lack of Monitoring
+No metrics, logs, or alerts in place (e.g., Prometheus, Grafana, ELK). We can’t detect or respond to failures or performance degradation.

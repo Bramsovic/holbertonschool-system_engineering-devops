@@ -1,0 +1,35 @@
+https://ibb.co/RTQQmN1p
+
+Component Roles
+
+Server
+A physical or virtual machine (here at IP 8.8.8.8) running an OS and all necessary services to host the website.
+Domain name
+The human‐friendly identifier (foobar.com); hides the numerical IP. When you enter www.foobar.com, your browser asks DNS to translate (“resolve”) it into 8.8.8.8.
+DNS record
+The www in www.foobar.com is typically an A record pointing www to the IPv4 address 8.8.8.8.
+Web server (Nginx)
+• Listens on ports 80 (HTTP) and 443 (HTTPS).
+• Serves static files directly (images, CSS, JS).
+• Proxies dynamic requests (e.g. PHP scripts) to the application server.
+Application server (PHP-FPM or similar)
+• Interprets application code (PHP).
+• Implements business logic, reads/writes to the database, and generates HTML.
+Application files (code base)
+• Your PHP scripts, templates, assets—all stored under /var/www/foobar/.
+Database (MySQL)
+• Stores persistent data (users, content, configurations).
+• Application server connects over a TCP socket or Unix socket to run SQL queries.
+Network communication
+• Browser ↔ Nginx: HTTP or HTTPS over TCP.
+• Nginx ↔ PHP-FPM: FastCGI protocol over a local socket or TCP port.
+• PHP-FPM ↔ MySQL: MySQL protocol over local socket or TCP port 3306.
+Single‐Point‐of‐Failure & Scaling Issues
+
+SPOF (Single Point of Failure)
+If the one server goes down (hardware, kernel panic, OS crash), the entire site becomes unavailable.
+Maintenance downtime
+Deploying new code or upgrading Nginx/PHP/MySQL typically requires restarting services, causing brief outages.
+Lack of scalability
+• CPU, memory, disk I/O, network bandwidth all share one machine.
+• Cannot easily handle traffic spikes—no load balancing, no replication.
